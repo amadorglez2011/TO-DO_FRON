@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api, setAuth } from "../api.ts"; // 👈 Se eliminó la línea de 'import logo...'
+import { api, setAuth } from "../api.ts";
+import logo from "../assets/logo.png"; // 👈 Importación correcta del archivo real
 
 export default function Login() {
     const nav = useNavigate();
@@ -30,8 +31,8 @@ export default function Login() {
         <div className="auth-wrap">
             <div className="card">
                 <div className="brand">
-                   {/* CORREGIDO: Cambiar src={logo} por src="/icon/logo1.png" */}
-<img src="/icon/logo1.png" alt="To-Do PWA" className="logo-img" />
+                    {/* 💡 CORREGIDO: Usa la variable del logo importado */}
+                    <img src={logo} alt="Logo" className="logo-img"/>
                     <h2>To-Do App</h2>
                     <p className="muted">Organiza tus tareas de manera eficiente</p>
                 </div>

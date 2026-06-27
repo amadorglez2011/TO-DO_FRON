@@ -1,76 +1,57 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api, setAuth } from "../api.ts";
+import { api, setAuth } from "../api";
+import logo from "../assets/logo.png"; // 👈 Importación correcta del archivo real
 
-export default function Login() {
-    const nav = useNavigate();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [show, setShow] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+export default function Register() {
+  const nav = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-    async function onSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        setError("");
-        setLoading(true);
-        try {
-            const {data} = await api.post("/auth/login", {email, password});
-            localStorage.setItem("token", data.token);
-            setAuth(data.token);
-            nav("/dashboard");
-        } catch (err: any) {
-            setError(err.response?.data?.message || "Error al iniciar sesion");
-        } finally {
-            setLoading(false);
-        }
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(""); setLoading(true);
+    try {
+      const { data } = await api.post("/auth/register", { name, email, password });
+      localStorage.setItem("token", data.token);
+      setAuth(data.token);
+      nav("/dashboard");
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "Error al registrarte");
+    } finally {
+      setLoading(false);
     }
+  }
 
-    return (
-        <div className="auth-wrap">
-            <div className="card">
-                <div className="brand">
-                    {/* Apunta directo a la carpeta pública */}
-                    {/* CORREGIDO: Cambiar src={logo} por src="/icon/logo1.png" */}
-<img src="/icon/logo1.png" alt="To-Do PWA" className="logo-img" />
-                    <h2>To-Do App</h2>
-                    <p className="muted">Organiza tus tareas de manera eficiente</p>
-                </div>
-                <form className="form" onSubmit={onSubmit}>
-                    <label> correo electronico </label>
-                    <input
-                        type="email"
-                        placeholder="Ingresa tu correo electronico"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                    <label> contraseña </label>
-                    <div className="pass">
-                        <input
-                            type={show ? "text" : "password"}
-                            placeholder="*********"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                        <button type="button" 
-                            className="ghost"
-                            onClick={() => setShow($ => !$)}
-                            aria-label= "Ocultar/ mostrar contraseña">
-                            {show ? "Ocultar" : "Mostrar"}
-                        </button>
-                    </div>
-                    {error && <div className="alert">{error}</div>}
-                    <button className="btn primary" disabled={loading}>
-                        {loading ? "iniciando sesion..." : "Iniciar Sesion"}
-                    </button>
-                </form>
-                <div className="footer-links">
-                    <span>¿No tienes una cuenta?</span>
-                    <Link to="/register" className="link">Registrate aqui</Link>
-                </div>
-            </div>
+  return (
+    <div className="auth-wrap">
+      <div className="card">
+        <div className="brand">
+          {/* 💡 CORREGIDO: Usa la variable del logo importado */}
+          <img src={logo} alt="To-Do PWA" className="logo-img" />
+          <h2>Crear cuenta</h2>
+          <p className="muted">Únete y comienza a organizar tus tareas</p>
         </div>
-    );
+
+        <form className="form" onSubmit={onSubmit}>
+          <label>Nombre</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre" required />
+          <label>Email</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tucorreo@dominio.com" required />
+          <label>Contraseña</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required />
+          {error && <div className="alert">{error}</div>}
+          <button className="btn primary" disabled={loading}>{loading ? "Creando..." : "Crear cuenta"}</button>
+        </form>
+
+        <div className="footer-links">
+          <span className="muted">¿Ya tienes cuenta?</span>
+          <Link to="/" className="link">Inicia sesión</Link>
+        </div>
+      </div>
+    </div>
+  );
 }

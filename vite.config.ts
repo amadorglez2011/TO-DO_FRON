@@ -1,42 +1,42 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import {VitePWA} from "vite-plugin-pwa";
+import { VitePWA } from "vite-plugin-pwa";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins:
-   [react(),
-   VitePWA({
-    registerType: 'autoUpdate',
-    manifest: {
-      name: 'ToDo Zero Miedo',
-      short_name: 'TDZM',
-      start_url: '/',
-      display: 'standalone',
-      background_color: '#ffffff',
-      theme_color: '#ed5555',
-      icons: [
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      // Esto le dice a Vite que incluya los assets en el Service Worker automáticamente
+      includeAssets: ['src/assets/logo.png', 'src/assets/screenshot1.png'],
+      manifest: {
+        name: 'ToDo Zero Miedo',
+        short_name: 'TDZM',
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#ffffff',
+        theme_color: '#ed5555',
+        icons: [
           {
-            src: '/icon/logo1.png', // Con una barra '/' al inicio apunta directo a la carpeta public
+            src: 'src/assets/logo.png', // RUTA REAL de tu proyecto
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/icon/logo1.png',
+            src: 'src/assets/logo.png', // RUTA REAL de tu proyecto
             sizes: '512x512',
             type: 'image/png'
           }
         ],
-      screenshots: [
-        {
-          src: '/screenshot/screenshot1.png',
-          sizes: '1280x720',
-          type: 'image/png'
-        },
-      ],
-    },
-    
-}),
-
-],    
+        screenshots: [
+          {
+            src: 'src/assets/screenshot1.png', // RUTA REAL de tu proyecto
+            sizes: '1280x720',
+            type: 'image/png',
+            form_factor: 'wide'
+          },
+        ],
+      },
+    }),
+  ],    
 });
