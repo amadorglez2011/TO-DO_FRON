@@ -17,19 +17,19 @@ export default defineConfig({
       theme_color: '#ed5555',
       icons: [
           {
-            src: '/logo.png', // Con una barra '/' al inicio apunta directo a la carpeta public
+            src: '/logo1.png', // Con una barra '/' al inicio apunta directo a la carpeta public
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/logo.png',
+            src: '/logo1.png',
             sizes: '512x512',
             type: 'image/png'
           }
         ],
       screenshots: [
         {
-          src: '/screenshot1.png',
+          src: '/screenshot12.png',
           sizes: '1280x720',
           type: 'image/png'
         },
