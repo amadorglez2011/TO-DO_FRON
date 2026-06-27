@@ -35,9 +35,9 @@ export default defineConfig({
         },
       ],
     },
-    developmentOptions: {
-  enabled: true,
-},
+    devOptions: {
+      enabled: true,
+    },
 }),
 
 ],    
