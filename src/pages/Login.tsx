@@ -1,8 +1,6 @@
-import {useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import {api, setAuth} from "../api.ts";
-import logo from '../assets/logo.png';
-
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { api, setAuth } from "../api.ts";
 
 export default function Login() {
     const nav = useNavigate();
@@ -31,46 +29,47 @@ export default function Login() {
     return (
         <div className="auth-wrap">
             <div className="card">
-        <div className="brand">
-            <img src={logo} alt="Logo" className="logo-img"/>
-            <h2>To-Do App</h2>
-            <p className="muted">Organiza tus tareas de manera eficiente</p>
-        </div>
-        <form className="form" onSubmit={onSubmit}>
-            <label> correo electronico </label>
-            <input
-                type="email"
-                placeholder="Ingresa tu correo electronico"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-            />
-            <label> contraseña </label>
-            <div className="pass">
-            <input
-                type={show ? "text" : "password"}
-                placeholder="*********"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-            />
-            <button type="button" 
-            className="ghost"
-             onClick={() => setShow($ => !$)}
-                aria-label= "Ocultar/ mostrar contraseña">
-                {show ? "Ocultar" : "Mostrar"}
-            </button>
+                <div className="brand">
+                    {/* 💡 CORREGIDO: Apunta directo a la carpeta public/icon/logo1.png */}
+                    <img src="/icon/logo1.png" alt="Logo" className="logo-img"/>
+                    <h2>To-Do App</h2>
+                    <p className="muted">Organiza tus tareas de manera eficiente</p>
+                </div>
+                <form className="form" onSubmit={onSubmit}>
+                    <label> correo electronico </label>
+                    <input
+                        type="email"
+                        placeholder="Ingresa tu correo electronico"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                    <label> contraseña </label>
+                    <div className="pass">
+                        <input
+                            type={show ? "text" : "password"}
+                            placeholder="*********"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <button type="button" 
+                            className="ghost"
+                            onClick={() => setShow($ => !$)}
+                            aria-label= "Ocultar/ mostrar contraseña">
+                            {show ? "Ocultar" : "Mostrar"}
+                        </button>
+                    </div>
+                    {error && <div className="alert">{error}</div>}
+                    <button className="btn primary" disabled={loading}>
+                        {loading ? "iniciando sesion..." : "Iniciar Sesion"}
+                    </button>
+                </form>
+                <div className="footer-links">
+                    <span>¿No tienes una cuenta?</span>
+                    <Link to="/register" className="link">Registrate aqui</Link>
+                </div>
             </div>
-            {error && <div className="alert">{error}</div>}
-            <button className="btn primary" disabled={loading}>
-                {loading ? "iniciando sesion..." : "Iniciar Sesion"}
-            </button>
-        </form>
-        <div className="footer-links">
-            <span>¿No tienes una cuenta?</span>
-            <Link to="/register" className="link">Registrate aqui</Link>
-        </div>
-        </div>
         </div>
     );
 }
