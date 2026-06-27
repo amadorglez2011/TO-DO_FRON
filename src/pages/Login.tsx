@@ -30,8 +30,8 @@ export default function Login() {
         <div className="auth-wrap">
             <div className="card">
                 <div className="brand">
-                    {/* 💡 CORREGIDO: Usar directamente la ruta del string apuntando a public */}
-                    <img src="/icon/logo1.png" alt="Logo" className="logo-img"/>
+                   {/* CORREGIDO: Cambiar src={logo} por src="/icon/logo1.png" */}
+<img src="/icon/logo1.png" alt="To-Do PWA" className="logo-img" />
                     <h2>To-Do App</h2>
                     <p className="muted">Organiza tus tareas de manera eficiente</p>
                 </div>

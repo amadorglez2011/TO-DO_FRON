@@ -31,7 +31,8 @@ export default function Login() {
             <div className="card">
                 <div className="brand">
                     {/* Apunta directo a la carpeta pública */}
-                    <img src="/icon/logo1.png" alt="Logo" className="logo-img"/>
+                    {/* CORREGIDO: Cambiar src={logo} por src="/icon/logo1.png" */}
+<img src="/icon/logo1.png" alt="To-Do PWA" className="logo-img" />
                     <h2>To-Do App</h2>
                     <p className="muted">Organiza tus tareas de manera eficiente</p>
                 </div>
