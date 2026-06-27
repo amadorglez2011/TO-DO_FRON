@@ -283,6 +283,7 @@ export default function Dashboard() {
     localStorage.removeItem("token");
     localStorage.removeItem("user"); 
     setAuth(null); 
+    window.location.href = "/";
   }
 
   const filtered = useMemo(() => {
