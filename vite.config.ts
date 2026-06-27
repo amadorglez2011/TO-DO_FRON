@@ -16,17 +16,17 @@ export default defineConfig({
       background_color: '#ffffff',
       theme_color: '#ed5555',
       icons: [
-        {
-          src: '../src/assets/logo.png',
-          sizes: '192x192',
-          type: 'image/png'
-        },
-        {
-          src: '../src/assets/logo.png',
-          sizes: '512x512',
-          type: 'image/png'
-        }
-      ],
+          {
+            src: '/logo.png', // Con una barra '/' al inicio apunta directo a la carpeta public
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/logo.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ],
       screenshots: [
         {
           src: '/assets/screenshot1.png',

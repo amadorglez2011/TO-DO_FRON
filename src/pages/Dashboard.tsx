@@ -68,7 +68,9 @@ export default function Dashboard() {
   const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
-    setAuth(localStorage.getItem("token"));
+    // Sincroniza el token actual con la API al montar el componente
+    const token = localStorage.getItem("token");
+    setAuth(token);
 
     const on = async () => {
       setOnline(true);
@@ -283,7 +285,8 @@ export default function Dashboard() {
     localStorage.removeItem("token");
     localStorage.removeItem("user"); 
     setAuth(null); 
-    window.location.href = "/";
+    // Usamos replace para evitar que el usuario regrese con las flechas del navegador
+    window.location.replace("/");
   }
 
   const filtered = useMemo(() => {
@@ -439,13 +442,13 @@ export default function Dashboard() {
               </div>
 
               <button
-  type="button"
-  className="btn danger"
-  style={{ width: "100%", padding: "8px", fontWeight: "bold", cursor: "pointer" }}
-  onClick={logout}
->
-  Cerrar Sesión  {/* Corregido */}
-</button>
+                type="button"
+                className="btn danger"
+                style={{ width: "100%", padding: "8px", fontWeight: "bold", cursor: "pointer" }}
+                onClick={logout}
+              >
+                Cerrar Sesión
+              </button>
             </div>
           )}
         </div>
