@@ -29,7 +29,7 @@ export default defineConfig({
         ],
       screenshots: [
         {
-          src: '/screenshot12.png',
+          src: '/screenshot/screenshot1.png',
           sizes: '1280x720',
           type: 'image/png'
         },
