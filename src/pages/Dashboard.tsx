@@ -438,14 +438,14 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <button 
-                type="button" 
-                className="btn danger" 
-                style={{ width: "100%", padding: "8px", fontWeight: "bold", cursor: "pointer" }} 
-                onClick={logout}
-              >
-                Cerrar Sesión
-              </button>
+              <button
+  type="button"
+  className="btn danger"
+  style={{ width: "100%", padding: "8px", fontWeight: "bold", cursor: "pointer" }}
+  onClick={logout}
+>
+  Cerrar Sesión  {/* Corregido */}
+</button>
             </div>
           )}
         </div>
