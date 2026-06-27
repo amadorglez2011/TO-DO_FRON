@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api, setAuth } from "../api.ts";
+import { api, setAuth } from "../api.ts"; // 👈 Se eliminó la línea de 'import logo...'
 
 export default function Login() {
     const nav = useNavigate();
@@ -30,7 +30,7 @@ export default function Login() {
         <div className="auth-wrap">
             <div className="card">
                 <div className="brand">
-                    {/* 💡 CORREGIDO: Apunta directo a la carpeta public/icon/logo1.png */}
+                    {/* 💡 CORREGIDO: Usar directamente la ruta del string apuntando a public */}
                     <img src="/icon/logo1.png" alt="Logo" className="logo-img"/>
                     <h2>To-Do App</h2>
                     <p className="muted">Organiza tus tareas de manera eficiente</p>
