@@ -31,7 +31,7 @@ export default defineConfig({
         screenshots: [
           {
             src: 'src/assets/screenshot1.png', // RUTA REAL de tu proyecto
-            sizes: '1280x720',
+            sizes: '1366x728',
             type: 'image/png',
             form_factor: 'wide'
           },
