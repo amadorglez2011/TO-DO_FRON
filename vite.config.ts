@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icons/logo.png', 'screenshots/screenshot1.png'],
+      includeAssets: ['icons/logo1.png', 'screenshots/screenshot12.png'],
       manifest: {
         name: 'ToDo Zero Miedo',
         short_name: 'TDZM',
