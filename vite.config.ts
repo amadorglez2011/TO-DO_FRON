@@ -7,30 +7,29 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      // Esto le dice a Vite que incluya los assets en el Service Worker automáticamente
-      includeAssets: ['src/assets/logo.png', 'src/assets/screenshot1.png'],
+      includeAssets: ['icons/logo.png', 'screenshots/screenshot1.png'],
       manifest: {
         name: 'ToDo Zero Miedo',
         short_name: 'TDZM',
-        start_url: 'https://to-do-fron.vercel.app/',
+        start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',
         theme_color: '#ed5555',
         icons: [
           {
-            src: 'src/assets/logorcs.png', // RUTA REAL de tu proyecto
+            src: '/icons/logorcs.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'src/assets/logo54.png', // RUTA REAL de tu proyecto
+            src: '/icons/logo54.png',
             sizes: '512x512',
             type: 'image/png'
           }
         ],
         screenshots: [
           {
-            src: 'src/assets/screenshot1.png', // RUTA REAL de tu proyecto
+            src: '/screenshots/screenshot12.png',
             sizes: '1366x728',
             type: 'image/png',
             form_factor: 'wide'
