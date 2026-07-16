@@ -12,7 +12,7 @@ export default defineConfig({
       manifest: {
         name: 'ToDo Zero Miedo',
         short_name: 'TDZM',
-        start_url: '/',
+        start_url: 'https://to-do-fron.vercel.app/',
         display: 'standalone',
         background_color: '#ffffff',
         theme_color: '#ed5555',
