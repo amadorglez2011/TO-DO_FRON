@@ -18,12 +18,12 @@ export default defineConfig({
         theme_color: '#ed5555',
         icons: [
           {
-            src: 'src/assets/logo.png', // RUTA REAL de tu proyecto
+            src: 'src/assets/logorcs.png', // RUTA REAL de tu proyecto
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'src/assets/logo.png', // RUTA REAL de tu proyecto
+            src: 'src/assets/logo54.png', // RUTA REAL de tu proyecto
             sizes: '512x512',
             type: 'image/png'
           }
