@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { api, setAuth } from "../api";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { api, setAuth } from "../api.ts";
 import {
   cacheTasks,
   getAllTasksLocal,
@@ -7,9 +7,9 @@ import {
   removeTaskLocal,
   queue,
   type OutboxOp,
-} from "../offline/db";
+} from "../offline/db.ts";
 
-import { syncNow } from "../offline/sync"; 
+import { syncNow } from "../offline/sync.ts"; 
 
 type Status = "Pendiente" | "En Progreso" | "Completada";
 
@@ -289,6 +289,70 @@ export default function Dashboard() {
     window.location.replace("/");
   }
 
+  async function logoutAllDevices() {
+    try {
+      await api.post("/auth/logout-all");
+    } finally {
+      logout();
+    }
+  }
+
+  // ------- Cierre de sesión automático por inactividad -------
+  const INACTIVITY_LIMIT = 2 * 60 * 1000; // 2 minutos, ajusta a gusto
+  const WARNING_BEFORE = 60 * 1000; // avisar 1 minuto antes de cerrar
+
+  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const warningTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countdownInterval = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [showInactivityWarning, setShowInactivityWarning] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(WARNING_BEFORE / 1000);
+
+  function clearAllTimers() {
+    if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+    if (warningTimer.current) clearTimeout(warningTimer.current);
+    if (countdownInterval.current) clearInterval(countdownInterval.current);
+  }
+
+  function startCountdown() {
+    setShowInactivityWarning(true);
+    setSecondsLeft(WARNING_BEFORE / 1000);
+    countdownInterval.current = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          if (countdownInterval.current) clearInterval(countdownInterval.current);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+  }
+
+  function resetInactivityTimer() {
+    clearAllTimers();
+    setShowInactivityWarning(false);
+    warningTimer.current = setTimeout(startCountdown, INACTIVITY_LIMIT - WARNING_BEFORE);
+    inactivityTimer.current = setTimeout(logout, INACTIVITY_LIMIT);
+  }
+
+  function stayConnected() {
+    resetInactivityTimer();
+  }
+
+  useEffect(() => {
+    const events = ["mousedown", "mousemove", "keydown", "scroll", "touchstart"];
+    const handleActivity = () => {
+      if (!showInactivityWarning) resetInactivityTimer();
+    };
+    events.forEach((e) => window.addEventListener(e, handleActivity));
+    resetInactivityTimer();
+
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, handleActivity));
+      clearAllTimers();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showInactivityWarning]);
+
   const filtered = useMemo(() => {
     let list = tasks;
     if (search.trim()) {
@@ -449,6 +513,14 @@ export default function Dashboard() {
               >
                 Cerrar Sesión
               </button>
+              <button
+                type="button"
+                className="btn danger"
+                style={{ width: "100%", padding: "8px", marginTop: "8px", fontWeight: "bold", cursor: "pointer" }}
+                onClick={logoutAllDevices}
+              >
+                Cerrar sesión en todos los dispositivos
+              </button>
             </div>
           )}
         </div>
@@ -573,6 +645,51 @@ export default function Dashboard() {
           </ul>
         )}
       </main>
+
+      {showInactivityWarning && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.6)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: "#161b22",
+            border: "1px solid #30363d",
+            borderRadius: "10px",
+            padding: "24px",
+            maxWidth: "360px",
+            textAlign: "center",
+            boxShadow: "0px 8px 24px rgba(0,0,0,0.6)"
+          }}>
+            <h3 style={{ margin: "0 0 12px", color: "#f0f6fc" }}>¿Sigues ahí?</h3>
+            <p style={{ color: "#c9d1d9", marginBottom: "16px" }}>
+              Tu sesión se cerrará por inactividad en <strong>{secondsLeft}</strong> segundos.
+            </p>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button
+                type="button"
+                className="btn"
+                style={{ flex: 1, padding: "10px", fontWeight: "bold", cursor: "pointer" }}
+                onClick={stayConnected}
+              >
+                Seguir conectado
+              </button>
+              <button
+                type="button"
+                className="btn danger"
+                style={{ flex: 1, padding: "10px", fontWeight: "bold", cursor: "pointer" }}
+                onClick={logout}
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
