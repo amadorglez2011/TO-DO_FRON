@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { api, setAuth } from "../api.ts";
+import { createPortal } from "react-dom";
+import { api, setAuth } from "../api";
 import {
   cacheTasks,
   getAllTasksLocal,
@@ -7,9 +8,9 @@ import {
   removeTaskLocal,
   queue,
   type OutboxOp,
-} from "../offline/db.ts";
+} from "../offline/db";
 
-import { syncNow } from "../offline/sync.ts"; 
+import { syncNow } from "../offline/sync"; 
 
 type Status = "Pendiente" | "En Progreso" | "Completada";
 
@@ -298,7 +299,7 @@ export default function Dashboard() {
   }
 
   // ------- Cierre de sesión automático por inactividad -------
-  const INACTIVITY_LIMIT = 2 * 60 * 1000; // 2 minutos, ajusta a gusto
+  const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutos, ajusta a gusto
   const WARNING_BEFORE = 60 * 1000; // avisar 1 minuto antes de cerrar
 
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -646,50 +647,105 @@ export default function Dashboard() {
         )}
       </main>
 
-      {showInactivityWarning && (
-        <div style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.6)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: "#161b22",
-            border: "1px solid #30363d",
-            borderRadius: "10px",
-            padding: "24px",
-            maxWidth: "360px",
-            textAlign: "center",
-            boxShadow: "0px 8px 24px rgba(0,0,0,0.6)"
-          }}>
-            <h3 style={{ margin: "0 0 12px", color: "#f0f6fc" }}>¿Sigues ahí?</h3>
-            <p style={{ color: "#c9d1d9", marginBottom: "16px" }}>
-              Tu sesión se cerrará por inactividad en <strong>{secondsLeft}</strong> segundos.
-            </p>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <button
-                type="button"
-                className="btn"
-                style={{ flex: 1, padding: "10px", fontWeight: "bold", cursor: "pointer" }}
-                onClick={stayConnected}
+      {showInactivityWarning &&
+        createPortal(
+          <>
+            <style>{`
+              @keyframes inactivity-fade-in {
+                from { opacity: 0; }
+                to { opacity: 1; }
+              }
+              @keyframes inactivity-pop-in {
+                from { opacity: 0; transform: scale(0.9) translateY(10px); }
+                to { opacity: 1; transform: scale(1) translateY(0); }
+              }
+              @keyframes inactivity-pulse-border {
+                0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+                50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+              }
+            `}</style>
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: "100vw",
+                height: "100vh",
+                background: "rgba(0,0,0,0.75)",
+                backdropFilter: "blur(3px)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 2147483647,
+                animation: "inactivity-fade-in 0.2s ease-out",
+              }}
+            >
+              <div
+                style={{
+                  background: "#161b22",
+                  border: "2px solid #ef4444",
+                  borderRadius: "12px",
+                  padding: "28px",
+                  width: "90%",
+                  maxWidth: "380px",
+                  textAlign: "center",
+                  boxShadow: "0px 12px 32px rgba(0,0,0,0.7)",
+                  animation:
+                    "inactivity-pop-in 0.25s ease-out, inactivity-pulse-border 2s ease-in-out infinite",
+                }}
               >
-                Seguir conectado
-              </button>
-              <button
-                type="button"
-                className="btn danger"
-                style={{ flex: 1, padding: "10px", fontWeight: "bold", cursor: "pointer" }}
-                onClick={logout}
-              >
-                Cerrar sesión
-              </button>
+                <div style={{ fontSize: "40px", marginBottom: "8px" }}>⚠️</div>
+                <h3 style={{ margin: "0 0 12px", color: "#f0f6fc", fontSize: "20px" }}>
+                  ¿Sigues ahí?
+                </h3>
+                <p style={{ color: "#c9d1d9", marginBottom: "20px", fontSize: "14px" }}>
+                  Tu sesión se cerrará por inactividad en{" "}
+                  <strong style={{ color: "#ef4444", fontSize: "18px" }}>{secondsLeft}</strong>{" "}
+                  segundos.
+                </p>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button
+                    type="button"
+                    className="btn"
+                    style={{
+                      flex: 1,
+                      padding: "12px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      background: "#238636",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "6px",
+                    }}
+                    onClick={stayConnected}
+                  >
+                    Seguir conectado
+                  </button>
+                  <button
+                    type="button"
+                    className="btn danger"
+                    style={{
+                      flex: 1,
+                      padding: "12px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      background: "#ef4444",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "6px",
+                    }}
+                    onClick={logout}
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </>,
+          document.body
+        )}
     </div>
   );
 }
