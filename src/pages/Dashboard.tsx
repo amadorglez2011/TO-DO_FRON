@@ -299,8 +299,8 @@ export default function Dashboard() {
   }
 
   // ------- Cierre de sesión automático por inactividad -------
-  const INACTIVITY_LIMIT =  20 * 1000; // 15 minutos, ajusta a gusto
-  const WARNING_BEFORE = 10 * 1000; // avisar 1 minuto antes de cerrar
+  const INACTIVITY_LIMIT = 5 * 20 * 1000; // 15 minutos, ajusta a gusto
+  const WARNING_BEFORE = 60 * 1000; // avisar 1 minuto antes de cerrar
 
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const warningTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
