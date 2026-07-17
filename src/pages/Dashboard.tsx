@@ -299,7 +299,7 @@ export default function Dashboard() {
   }
 
   // ------- Cierre de sesión automático por inactividad -------
-  const INACTIVITY_LIMIT = 5 * 20 * 1000; // 15 minutos, ajusta a gusto
+  const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutos, ajusta a gusto
   const WARNING_BEFORE = 60 * 1000; // avisar 1 minuto antes de cerrar
 
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -398,7 +398,192 @@ export default function Dashboard() {
   }, [user]);
 
   return (
-    <div className="wrap">
+    <div className="wrap cm-dash">
+      <style>{`
+        .cm-dash {
+          background: #241f1f;
+          min-height: 100vh;
+          color: #f2ece4;
+        }
+        .cm-dash .topbar {
+          background: #2a2323;
+          border-bottom: 1px solid #3a2424;
+          padding: 14px 20px;
+          display: flex;
+          align-items: center;
+        }
+        .cm-dash .topbar h1 {
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 20px;
+          color: #f2ece4;
+          margin: 0;
+        }
+        .cm-dash .stats {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          font-size: 13px;
+          color: #b0a89e;
+        }
+        .cm-dash .badge {
+          border-radius: 10px;
+          padding: 3px 10px;
+          font-size: 12px;
+          font-weight: 700;
+          color: #f2ece4;
+        }
+        .cm-dash main {
+          padding: 24px 20px;
+          max-width: 780px;
+          margin: 0 auto;
+        }
+        .cm-dash .add-grid {
+          display: grid;
+          gap: 10px;
+          background: #2a2323;
+          border: 1px solid #3a2424;
+          border-radius: 6px;
+          padding: 16px;
+          margin-bottom: 20px;
+        }
+        .cm-dash .add-grid input,
+        .cm-dash .add-grid textarea,
+        .cm-dash .edit {
+          background: #1c1717;
+          border: 1px solid #3f2a2a;
+          border-radius: 3px;
+          padding: 10px 12px;
+          color: #f2ece4;
+          font-size: 14px;
+          outline: none;
+        }
+        .cm-dash .add-grid input:focus,
+        .cm-dash .add-grid textarea:focus,
+        .cm-dash .edit:focus {
+          border-color: #9c2b2b;
+        }
+        .cm-dash .btn {
+          background: #9c2b2b;
+          color: #f5f0e8;
+          border: none;
+          border-radius: 3px;
+          padding: 10px 16px;
+          font-weight: 700;
+          font-size: 13px;
+          letter-spacing: 0.5px;
+          cursor: pointer;
+        }
+        .cm-dash .btn:hover {
+          background: #b83232;
+        }
+        .cm-dash .btn.danger {
+          background: transparent;
+          border: 1px solid #9c2b2b;
+          color: #d94848;
+        }
+        .cm-dash .btn.danger:hover {
+          background: #2a1414;
+        }
+        .cm-dash .toolbar {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+          margin-bottom: 16px;
+          flex-wrap: wrap;
+        }
+        .cm-dash .search {
+          flex: 1;
+          min-width: 200px;
+          background: #1c1717;
+          border: 1px solid #3f2a2a;
+          border-radius: 3px;
+          padding: 10px 12px;
+          color: #f2ece4;
+          font-size: 14px;
+          outline: none;
+        }
+        .cm-dash .filters {
+          display: flex;
+          gap: 6px;
+        }
+        .cm-dash .chip {
+          background: #2a2323;
+          border: 1px solid #3a2424;
+          border-radius: 20px;
+          padding: 6px 14px;
+          font-size: 13px;
+          color: #b0a89e;
+          cursor: pointer;
+        }
+        .cm-dash .chip.active {
+          background: #9c2b2b;
+          border-color: #9c2b2b;
+          color: #f5f0e8;
+        }
+        .cm-dash .list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .cm-dash .item {
+          background: #2a2323;
+          border: 1px solid #3a2424;
+          border-radius: 6px;
+          padding: 14px;
+          display: flex;
+          gap: 12px;
+          align-items: flex-start;
+        }
+        .cm-dash .item.done {
+          opacity: 0.6;
+        }
+        .cm-dash .status-select {
+          background: #1c1717;
+          border: 1px solid #3f2a2a;
+          border-radius: 3px;
+          color: #f2ece4;
+          padding: 6px 8px;
+          font-size: 12px;
+        }
+        .cm-dash .content {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .cm-dash .title {
+          font-weight: 500;
+          color: #f2ece4;
+          cursor: pointer;
+        }
+        .cm-dash .desc {
+          color: #b0a89e;
+          font-size: 13px;
+          margin: 0;
+        }
+        .cm-dash .actions {
+          display: flex;
+          gap: 6px;
+        }
+        .cm-dash .icon {
+          background: transparent;
+          border: 1px solid #3a2424;
+          border-radius: 3px;
+          padding: 6px 8px;
+          cursor: pointer;
+        }
+        .cm-dash .icon.danger {
+          border-color: #5a2020;
+        }
+        .cm-dash .empty {
+          color: #8a8078;
+          text-align: center;
+          padding: 24px;
+        }
+      `}</style>
       <header className="topbar">
         <h1>To-Do PWA</h1>
         <div className="spacer" />
@@ -406,7 +591,7 @@ export default function Dashboard() {
           <span>Total: {stats.total}</span>
           <span>Hechas: {stats.done}</span>
           <span>Pendientes: {stats.pending}</span>
-          <span className="badge" style={{ marginLeft: 8, background: online ? "#1f6feb" : "#b45309" }}>
+          <span className="badge" style={{ marginLeft: 8, background: online ? "#9c2b2b" : "#b45309" }}>
             {online ? "Online" : "Offline"}
           </span>
         </div>
@@ -424,9 +609,9 @@ export default function Dashboard() {
               fontSize: "16px", 
               fontWeight: "bold",
               cursor: "pointer",
-              background: "#1f6feb",
+              background: "#9c2b2b",
               color: "#ffffff",
-              border: "2px solid #30363d",
+              border: "2px solid #3a2424",
               display: "flex",
               alignItems: "center",
               justifyContent: "center"
@@ -441,8 +626,8 @@ export default function Dashboard() {
               position: "absolute",
               right: 0,
               top: "50px",
-              background: "#161b22", 
-              border: "1px solid #30363d",
+              background: "#241d1d", 
+              border: "1px solid #3a2424",
               borderRadius: "10px",
               padding: "16px",
               minWidth: "260px",
@@ -455,7 +640,7 @@ export default function Dashboard() {
                   borderRadius: "50%", 
                   width: 50, 
                   height: 50, 
-                  background: "#238636",
+                  background: "#9c2b2b",
                   color: "#fff",
                   fontSize: "20px",
                   fontWeight: "bold",
@@ -466,46 +651,46 @@ export default function Dashboard() {
                   {userInitial}
                 </div>
                 <div>
-                  <h4 style={{ margin: 0, color: "#f0f6fc", fontSize: "16px" }}>{user?.name}</h4>
-                  <span className="badge" style={{ background: "#21262d", border: "1px solid #30363d", fontSize: "11px", padding: "2px 6px", borderRadius: "10px", color: "#58a6ff" }}>
+                  <h4 style={{ margin: 0, color: "#f2ece4", fontSize: "16px" }}>{user?.name}</h4>
+                  <span className="badge" style={{ background: "#2a1f1f", border: "1px solid #3a2424", fontSize: "11px", padding: "2px 6px", borderRadius: "10px", color: "#d94848" }}>
                     {user?.role}
                   </span>
                 </div>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#c9d1d9" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", color: "#d8d2c8" }}>
                 <div>
-                  <strong style={{ color: "#8b949e" }}>Correo:</strong>
-                  <div style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", color: "#f0f6fc" }}>
+                  <strong style={{ color: "#8a8078" }}>Correo:</strong>
+                  <div style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", color: "#f2ece4" }}>
                     {user?.email}
                   </div>
                 </div>
                 
                 <div>
-                  <strong style={{ color: "#8b949e" }}>Miembro desde:</strong>
-                  <div style={{ color: "#f0f6fc" }}>{formattedJoinDate}</div>
+                  <strong style={{ color: "#8a8078" }}>Miembro desde:</strong>
+                  <div style={{ color: "#f2ece4" }}>{formattedJoinDate}</div>
                 </div>
 
                 {user?.id && (
                   <div>
-                    <strong style={{ color: "#8b949e" }}>User ID:</strong>
-                    <div style={{ fontSize: "11px", fontFamily: "monospace", color: "#8b949e" }}>
+                    <strong style={{ color: "#8a8078" }}>User ID:</strong>
+                    <div style={{ fontSize: "11px", fontFamily: "monospace", color: "#8a8078" }}>
                       {user.id}
                     </div>
                   </div>
                 )}
               </div>
 
-              <hr style={{ borderColor: "#30363d", margin: "14px 0" }} />
+              <hr style={{ borderColor: "#3a2424", margin: "14px 0" }} />
 
-              <div style={{ background: "#21262d", borderRadius: "6px", padding: "10px", marginBottom: "14px", fontSize: "12px" }}>
+              <div style={{ background: "#2a1f1f", borderRadius: "6px", padding: "10px", marginBottom: "14px", fontSize: "12px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                  <span style={{ color: "#8b949e" }}>Tareas Completadas:</span>
+                  <span style={{ color: "#8a8078" }}>Tareas Completadas:</span>
                   <span style={{ color: "#56d364", fontWeight: "bold" }}>{stats.done}</span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#8b949e" }}>Tasa de Eficiencia:</span>
-                  <span style={{ color: "#f0f6fc", fontWeight: "bold" }}>
+                  <span style={{ color: "#8a8078" }}>Tasa de Eficiencia:</span>
+                  <span style={{ color: "#f2ece4", fontWeight: "bold" }}>
                     {stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0}%
                   </span>
                 </div>
@@ -665,8 +850,8 @@ export default function Dashboard() {
                 to { opacity: 1; transform: scale(1) translateY(0); }
               }
               @keyframes inactivity-pulse-border {
-                0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
-                50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+                0%, 100% { box-shadow: 0 0 0 0 rgba(156, 43, 43, 0.5); }
+                50% { box-shadow: 0 0 0 10px rgba(156, 43, 43, 0); }
               }
             `}</style>
             <div
@@ -689,8 +874,8 @@ export default function Dashboard() {
             >
               <div
                 style={{
-                  background: "#161b22",
-                  border: "2px solid #ef4444",
+                  background: "#241d1d",
+                  border: "2px solid #9c2b2b",
                   borderRadius: "12px",
                   padding: "28px",
                   width: "90%",
@@ -702,12 +887,12 @@ export default function Dashboard() {
                 }}
               >
                 <div style={{ fontSize: "40px", marginBottom: "8px" }}>⚠️</div>
-                <h3 style={{ margin: "0 0 12px", color: "#f0f6fc", fontSize: "20px" }}>
+                <h3 style={{ margin: "0 0 12px", color: "#f2ece4", fontSize: "20px" }}>
                   ¿Sigues ahí?
                 </h3>
-                <p style={{ color: "#c9d1d9", marginBottom: "20px", fontSize: "14px" }}>
+                <p style={{ color: "#d8d2c8", marginBottom: "20px", fontSize: "14px" }}>
                   Tu sesión se cerrará por inactividad en{" "}
-                  <strong style={{ color: "#ef4444", fontSize: "18px" }}>{secondsLeft}</strong>{" "}
+                  <strong style={{ color: "#9c2b2b", fontSize: "18px" }}>{secondsLeft}</strong>{" "}
                   segundos.
                 </p>
                 <div style={{ display: "flex", gap: "10px" }}>
@@ -719,9 +904,9 @@ export default function Dashboard() {
                       padding: "12px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      background: "#238636",
-                      color: "#fff",
-                      border: "none",
+                      background: "transparent",
+                      color: "#f2ece4",
+                      border: "1px solid #5c5450",
                       borderRadius: "6px",
                     }}
                     onClick={stayConnected}
@@ -736,7 +921,7 @@ export default function Dashboard() {
                       padding: "12px",
                       fontWeight: "bold",
                       cursor: "pointer",
-                      background: "#ef4444",
+                      background: "#9c2b2b",
                       color: "#fff",
                       border: "none",
                       borderRadius: "6px",
