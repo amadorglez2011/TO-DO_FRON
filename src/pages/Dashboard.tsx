@@ -299,8 +299,8 @@ export default function Dashboard() {
   }
 
   // ------- Cierre de sesión automático por inactividad -------
-  const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutos, ajusta a gusto
-  const WARNING_BEFORE = 60 * 1000; // avisar 1 minuto antes de cerrar
+  const INACTIVITY_LIMIT =  20 * 1000; // 15 minutos, ajusta a gusto
+  const WARNING_BEFORE = 10 * 1000; // avisar 1 minuto antes de cerrar
 
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const warningTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -339,10 +339,15 @@ export default function Dashboard() {
     resetInactivityTimer();
   }
 
+  const showWarningRef = useRef(false);
+  useEffect(() => {
+    showWarningRef.current = showInactivityWarning;
+  }, [showInactivityWarning]);
+
   useEffect(() => {
     const events = ["mousedown", "mousemove", "keydown", "scroll", "touchstart"];
     const handleActivity = () => {
-      if (!showInactivityWarning) resetInactivityTimer();
+      if (!showWarningRef.current) resetInactivityTimer();
     };
     events.forEach((e) => window.addEventListener(e, handleActivity));
     resetInactivityTimer();
@@ -352,7 +357,7 @@ export default function Dashboard() {
       clearAllTimers();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showInactivityWarning]);
+  }, []);
 
   const filtered = useMemo(() => {
     let list = tasks;
