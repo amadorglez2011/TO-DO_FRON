@@ -116,16 +116,17 @@ export default function Dashboard() {
       }
 
       if (navigator.onLine) {
-        const { data } = await api.get("/auth/me"); 
-        if (data) {
+        const { data } = await api.get("/auth/profile");
+        const u = data?.user;
+        if (u) {
           setUser({
-            id: data._id || data.id || "",
-            name: data.name || data.username || "Usuario General",
-            email: data.email || "Sin correo",
-            role: data.role || "Miembro",
-            createdAt: data.createdAt || ""
+            id: u._id || u.id || "",
+            name: u.name || "Usuario General",
+            email: u.email || "Sin correo",
+            role: u.role || "Miembro",
+            createdAt: u.createdAt || ""
           });
-          localStorage.setItem("user", JSON.stringify(data));
+          localStorage.setItem("user", JSON.stringify(u));
         }
       }
     } catch {
@@ -400,6 +401,12 @@ export default function Dashboard() {
   return (
     <div className="wrap cm-dash">
       <style>{`
+        html, body, #root {
+          background: #241f1f;
+          margin: 0;
+          padding: 0;
+          min-height: 100%;
+        }
         .cm-dash {
           background: #241f1f;
           min-height: 100vh;
