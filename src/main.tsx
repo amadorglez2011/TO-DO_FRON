@@ -9,6 +9,7 @@ import {
 import Login from "./pages/Login.tsx";
 import Register from "./pages/Register.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import EditProfile from "./pages/EditProfile.tsx";
 import ProtectedRoute from "./routes/ProtectedRoute.tsx";
 
 import "./index.css";
@@ -27,6 +28,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         element={
           <ProtectedRoute>
           <Dashboard />
+          </ProtectedRoute>
+        } 
+        />
+        <Route 
+        path="/profile/edit" 
+        element={
+          <ProtectedRoute>
+          <EditProfile />
           </ProtectedRoute>
         } 
         />

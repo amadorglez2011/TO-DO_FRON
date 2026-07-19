@@ -68,6 +68,15 @@ export default function Dashboard() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [showProfile, setShowProfile] = useState(false);
 
+  // ------- Edición de perfil -------
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editPassword, setEditPassword] = useState("");
+  const [editConfirmPassword, setEditConfirmPassword] = useState("");
+  const [editProfileError, setEditProfileError] = useState("");
+  const [editProfileSaving, setEditProfileSaving] = useState(false);
+
   useEffect(() => {
     // Sincroniza el token actual con la API al montar el componente
     const token = localStorage.getItem("token");
@@ -299,9 +308,77 @@ export default function Dashboard() {
     }
   }
 
+  // ------- Edición de perfil -------
+  function openEditProfile() {
+    setEditName(user?.name ?? "");
+    setEditEmail(user?.email ?? "");
+    setEditPassword("");
+    setEditConfirmPassword("");
+    setEditProfileError("");
+    setShowEditProfile(true);
+    setShowProfile(false);
+  }
+
+  function closeEditProfile() {
+    if (editProfileSaving) return;
+    setShowEditProfile(false);
+    setEditProfileError("");
+  }
+
+  async function saveProfile(e: React.FormEvent) {
+    e.preventDefault();
+    setEditProfileError("");
+
+    const name = editName.trim();
+    const email = editEmail.trim();
+
+    if (!name || !email) {
+      setEditProfileError("Nombre y correo son obligatorios.");
+      return;
+    }
+
+    if (editPassword && editPassword.length < 6) {
+      setEditProfileError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+
+    if (editPassword && editPassword !== editConfirmPassword) {
+      setEditProfileError("Las contraseñas no coinciden.");
+      return;
+    }
+
+    const payload: Record<string, string> = { name, email };
+    if (editPassword) payload.password = editPassword;
+
+    setEditProfileSaving(true);
+    try {
+      const { data } = await api.put("/auth/profile", payload);
+      const u = data?.user ?? { ...user, name, email };
+      const updatedUser: UserProfile = {
+        id: u._id || u.id || user?.id || "",
+        name: u.name || name,
+        email: u.email || email,
+        role: u.role || user?.role || "Miembro",
+        createdAt: u.createdAt || user?.createdAt || "",
+      };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(u));
+      setShowEditProfile(false);
+      setEditPassword("");
+      setEditConfirmPassword("");
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ||
+        "No se pudo actualizar el perfil. Intenta de nuevo.";
+      setEditProfileError(msg);
+    } finally {
+      setEditProfileSaving(false);
+    }
+  }
+
   // ------- Cierre de sesión automático por inactividad -------
-  const INACTIVITY_LIMIT = 60 * 1000; // 15 minutos, ajusta a gusto
-  const WARNING_BEFORE = 15 * 1000; // avisar 1 minuto antes de cerrar
+  const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutos
+  const WARNING_BEFORE = 60 * 1000; // avisar 1 minuto antes de cerrar
 
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const warningTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -491,6 +568,18 @@ export default function Dashboard() {
         .cm-dash .btn.danger:hover {
           background: #2a1414;
         }
+        .cm-dash .btn.secondary {
+          background: transparent;
+          border: 1px solid #5c5450;
+          color: #f2ece4;
+        }
+        .cm-dash .btn.secondary:hover {
+          background: #2a2323;
+        }
+        .cm-dash .btn[disabled] {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
         .cm-dash .toolbar {
           display: flex;
           gap: 12px;
@@ -589,6 +678,27 @@ export default function Dashboard() {
           color: #8a8078;
           text-align: center;
           padding: 24px;
+        }
+        .cm-dash .modal-field {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          text-align: left;
+          margin-bottom: 12px;
+        }
+        .cm-dash .modal-field label {
+          font-size: 12px;
+          color: #8a8078;
+        }
+        .cm-dash .modal-error {
+          background: #2a1414;
+          border: 1px solid #5a2020;
+          color: #f5a3a3;
+          border-radius: 6px;
+          padding: 8px 10px;
+          font-size: 13px;
+          margin-bottom: 12px;
+          text-align: left;
         }
       `}</style>
       <header className="topbar">
@@ -702,6 +812,15 @@ export default function Dashboard() {
                   </span>
                 </div>
               </div>
+
+              <button
+                type="button"
+                className="btn secondary"
+                style={{ width: "100%", padding: "8px", fontWeight: "bold", cursor: "pointer", marginBottom: "8px" }}
+                onClick={openEditProfile}
+              >
+                Editar Perfil
+              </button>
 
               <button
                 type="button"
@@ -843,6 +962,137 @@ export default function Dashboard() {
           </ul>
         )}
       </main>
+
+      {showEditProfile &&
+        createPortal(
+          <>
+            <style>{`
+              @keyframes profile-fade-in {
+                from { opacity: 0; }
+                to { opacity: 1; }
+              }
+              @keyframes profile-pop-in {
+                from { opacity: 0; transform: scale(0.9) translateY(10px); }
+                to { opacity: 1; transform: scale(1) translateY(0); }
+              }
+            `}</style>
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: "100vw",
+                height: "100vh",
+                background: "rgba(0,0,0,0.75)",
+                backdropFilter: "blur(3px)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 2147483647,
+                animation: "profile-fade-in 0.2s ease-out",
+              }}
+              onClick={closeEditProfile}
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  background: "#241d1d",
+                  border: "2px solid #9c2b2b",
+                  borderRadius: "12px",
+                  padding: "28px",
+                  width: "90%",
+                  maxWidth: "380px",
+                  textAlign: "center",
+                  boxShadow: "0px 12px 32px rgba(0,0,0,0.7)",
+                  animation: "profile-pop-in 0.25s ease-out",
+                }}
+              >
+                <h3 style={{ margin: "0 0 18px", color: "#f2ece4", fontSize: "20px" }}>
+                  Editar Perfil
+                </h3>
+
+                <form onSubmit={saveProfile}>
+                  {editProfileError && (
+                    <div className="modal-error">{editProfileError}</div>
+                  )}
+
+                  <div className="modal-field">
+                    <label htmlFor="edit-name">Nombre</label>
+                    <input
+                      id="edit-name"
+                      className="edit"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      placeholder="Nombre"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div className="modal-field">
+                    <label htmlFor="edit-email">Correo</label>
+                    <input
+                      id="edit-email"
+                      className="edit"
+                      type="email"
+                      value={editEmail}
+                      onChange={(e) => setEditEmail(e.target.value)}
+                      placeholder="Correo"
+                    />
+                  </div>
+
+                  <div className="modal-field">
+                    <label htmlFor="edit-password">Nueva contraseña (opcional)</label>
+                    <input
+                      id="edit-password"
+                      className="edit"
+                      type="password"
+                      value={editPassword}
+                      onChange={(e) => setEditPassword(e.target.value)}
+                      placeholder="Dejar en blanco para no cambiarla"
+                    />
+                  </div>
+
+                  {editPassword && (
+                    <div className="modal-field">
+                      <label htmlFor="edit-password-confirm">Confirmar contraseña</label>
+                      <input
+                        id="edit-password-confirm"
+                        className="edit"
+                        type="password"
+                        value={editConfirmPassword}
+                        onChange={(e) => setEditConfirmPassword(e.target.value)}
+                        placeholder="Repite la nueva contraseña"
+                      />
+                    </div>
+                  )}
+
+                  <div style={{ display: "flex", gap: "10px", marginTop: "6px" }}>
+                    <button
+                      type="button"
+                      className="btn secondary"
+                      style={{ flex: 1, padding: "12px", borderRadius: "6px" }}
+                      onClick={closeEditProfile}
+                      disabled={editProfileSaving}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn"
+                      style={{ flex: 1, padding: "12px", borderRadius: "6px" }}
+                      disabled={editProfileSaving}
+                    >
+                      {editProfileSaving ? "Guardando…" : "Guardar"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </>,
+          document.body
+        )}
 
       {showInactivityWarning &&
         createPortal(
