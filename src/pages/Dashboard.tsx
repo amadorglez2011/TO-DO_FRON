@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { api, setAuth } from "../api";
+import { usePushNotifications } from "../hooks/usePushNotifications";
 import {
   cacheTasks,
   getAllTasksLocal,
@@ -57,6 +58,7 @@ function normalizeTask(x: any): Task {
 
 export default function Dashboard() {
   const nav = useNavigate();
+  const push = usePushNotifications();
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState("");
@@ -717,6 +719,79 @@ export default function Dashboard() {
                   </span>
                 </div>
               </div>
+
+              {push.supported && (
+                <div style={{ marginBottom: "14px" }}>
+                  {push.subscribed ? (
+                    <>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <button
+                          type="button"
+                          className="btn"
+                          style={{
+                            flex: 1,
+                            padding: "8px",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                            background: "transparent",
+                            border: "1px solid #5c5450",
+                            color: "#d8d2c8",
+                            borderRadius: "6px"
+                          }}
+                          onClick={push.sendTest}
+                        >
+                          Probar notificación
+                        </button>
+                        <button
+                          type="button"
+                          className="btn"
+                          style={{
+                            flex: 1,
+                            padding: "8px",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                            background: "transparent",
+                            border: "1px solid #5a2020",
+                            color: "#d94848",
+                            borderRadius: "6px"
+                          }}
+                          onClick={push.unsubscribe}
+                          disabled={push.loading}
+                        >
+                          Desactivar
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        width: "100%",
+                        padding: "8px",
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        background: "transparent",
+                        border: "1px solid #5c5450",
+                        color: "#d8d2c8",
+                        borderRadius: "6px"
+                      }}
+                      onClick={push.subscribe}
+                      disabled={push.loading}
+                    >
+                      {push.loading ? "Activando..." : "🔔 Activar notificaciones"}
+                    </button>
+                  )}
+                  {push.error && (
+                    <p style={{ color: "#e07a7a", fontSize: "11px", marginTop: "6px", marginBottom: 0 }}>
+                      {push.error}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <button
                 type="button"
