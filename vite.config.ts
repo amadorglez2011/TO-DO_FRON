@@ -10,6 +10,10 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.js',
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,
+        type: 'module',
+      },
       includeAssets: ['icons/logo1.png', 'screenshots/screenshot12.png'],
       manifest: {
         name: 'ToDo Zero Miedo',
