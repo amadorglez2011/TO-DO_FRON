@@ -213,6 +213,9 @@ export default function Login() {
                     </button>
                 </form>
                 <div className="cm-footer">
+                    <Link to="/forgot-password" className="cm-link" style={{ marginLeft: 0 }}>¿Olvidaste tu contraseña?</Link>
+                </div>
+                <div className="cm-footer">
                     <span>¿No tienes una cuenta?</span>
                     <Link to="/register" className="cm-link">Registrate aqui</Link>
                 </div>

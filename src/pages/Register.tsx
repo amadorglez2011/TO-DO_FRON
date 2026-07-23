@@ -8,14 +8,26 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [securityQuestion, setSecurityQuestion] = useState("");
+  const [securityAnswer, setSecurityAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const SECURITY_QUESTIONS = [
+    "¿Cuál es el nombre de tu primera mascota?",
+    "¿En qué ciudad naciste?",
+    "¿Cuál es el nombre de tu mejor amigo de la infancia?",
+    "¿Cuál era el modelo de tu primer coche?",
+    "¿Cuál es tu comida favorita?",
+  ];
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(""); setLoading(true);
     try {
-      const { data } = await api.post("/auth/register", { name, email, password });
+      const { data } = await api.post("/auth/register", {
+        name, email, password, securityQuestion, securityAnswer,
+      });
       localStorage.setItem("token", data.token);
       setAuth(data.token);
       nav("/dashboard");
@@ -167,6 +179,38 @@ export default function Register() {
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tucorreo@dominio.com" required />
           <label>Contraseña</label>
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required />
+
+          <label>Pregunta de seguridad</label>
+          <select
+            value={securityQuestion}
+            onChange={(e) => setSecurityQuestion(e.target.value)}
+            required
+            style={{
+              width: "100%",
+              background: "#171212",
+              border: "1px solid #3f2a2a",
+              borderRadius: "3px",
+              padding: "11px 13px",
+              color: securityQuestion ? "#f2ece4" : "#5c5450",
+              fontSize: "14px",
+              outline: "none",
+            }}
+          >
+            <option value="" disabled>Elige una pregunta…</option>
+            {SECURITY_QUESTIONS.map((q) => (
+              <option key={q} value={q} style={{ color: "#f2ece4", background: "#171212" }}>{q}</option>
+            ))}
+          </select>
+
+          <label>Respuesta de seguridad</label>
+          <input
+            type="text"
+            value={securityAnswer}
+            onChange={(e) => setSecurityAnswer(e.target.value)}
+            placeholder="Tu respuesta (guárdala bien, BROTHER)"
+            required
+          />
+
           {error && <div className="cm-alert">{error}</div>}
           <button className="cm-btn-primary" disabled={loading}>{loading ? "Creando..." : "Crear cuenta"}</button>
         </form>

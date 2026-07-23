@@ -11,7 +11,7 @@ import Register from "./pages/Register.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import EditProfile from "./pages/EditProfile.tsx";
 import ProtectedRoute from "./routes/ProtectedRoute.tsx";
-
+import ForgotPassword from "./pages/ForgotPassword.tsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -20,7 +20,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <Routes>
         {/* Rutas públicas*/}
         <Route path="/" element={<Login />} />
-       <Route path="/register" element={<Register />} />
+<Route path="/register" element={<Register />} />
+<Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Rutas protegidas */}
         <Route 
