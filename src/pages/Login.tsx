@@ -179,7 +179,7 @@ export default function Login() {
             <div className="cm-card">
                 <div className="cm-brand">
                     <img src={logo} alt="Logo" className="logo-img"/>
-                    <h2>To-Do App</h2>
+                    <h2>To-Do Cero miedo</h2>
                     <p className="muted">Organiza tus tareas de manera eficiente</p>
                 </div>
                 <form className="cm-form" onSubmit={onSubmit}>

@@ -599,7 +599,7 @@ export default function Dashboard() {
         }
       `}</style>
       <header className="topbar">
-        <h1>To-Do PWA</h1>
+        <h1>Dash- cero miedo</h1>
         <div className="spacer" />
         <div className="stats">
           <span>Total: {stats.total}</span>

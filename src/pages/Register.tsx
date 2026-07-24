@@ -168,7 +168,7 @@ export default function Register() {
       <div className="cm-card">
         <div className="cm-brand">
           <img src={logo} alt="To-Do PWA" className="logo-img" />
-          <h2>Crear cuenta</h2>
+          <h2>Crea tu cuenta</h2>
           <p className="muted">Únete y comienza a organizar tus tareas</p>
         </div>
 
